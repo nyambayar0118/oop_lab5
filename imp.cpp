@@ -2,9 +2,10 @@
 
 using namespace std;
 
+// Үүссэн объектын тоог классын шинжид 0 гарааны утгатайгаар хадгална
 int employee::employee_count = 0;
 
-// Ажилчин классын байгуулагч функц
+// Ажилчин классын анхдагч байгуулагч функц
 employee::employee()
 {
     emp_id = 0;
@@ -14,7 +15,7 @@ employee::employee()
     emp_hourly_rate = 5000;
 }
 
-// Ажилчин классын анхдагч утгатай параметртэй байгуулагч функы
+// Ажилчин классын параметртэй байгуулагч функы
 employee::employee(int id, char *name, char *role, float work_time, float hourly_rate)
 {
     emp_id = id;
@@ -29,28 +30,18 @@ employee::employee(int id, char *name, char *role, float work_time, float hourly
 // Ажилчин классын устгагч функц
 employee::~employee()
 {
+    // Нэр, албан тушаалын санах ойг чөлөөлнө
     delete[] emp_name;
     delete[] emp_role;
     employee_count--;
     cout << emp_id << " id-tai ajiltan ustav" << endl;
 }
 
-// Ажилчин классын хуулагч байгуулагч функц
+// Ажилчин классын хуулагч функц
 void employee::copy(employee &e)
 {
-    if (emp_name != NULL)
-    {
-        delete[] emp_name;
-    }
-    if (emp_role != NULL)
-    {
-        delete[] emp_role;
-    }
-
-    emp_name = new char(strlen(e.emp_name) + 1);
-    emp_role = new char(strlen(e.emp_role) + 1);
-    strcpy(emp_name, e.emp_name);
-    strcpy(emp_role, e.emp_role);
+    set_emp_name(e.emp_name);
+    set_emp_role(e.emp_role);
 
     emp_id = e.emp_id;
     emp_hourly_rate = e.emp_hourly_rate;
@@ -61,6 +52,7 @@ void employee::copy(employee &e)
 void employee::printData()
 {
     cout << get_emp_id() << " id-tai ajilchnii medeelel:" << endl;
+    // Цалинг тооцоолоод нэмж хэвлэнэ
     cout << "Tsalin: " << calcSalary() << endl;
     cout << "Ner: " << get_emp_name() << endl;
     cout << "Alban tushaal: " << get_emp_role() << endl;
@@ -74,6 +66,7 @@ float employee::calcSalary()
 {
     float salary = emp_hourly_rate * emp_work_time;
 
+    // Хэрэв захирал албан тушаалтай бол цалинг нэмж тооцно
     if (strcmp("Zahiral", emp_role) == 0 || strcmp("zahiral", emp_role) == 0)
     {
         salary += calcBossSalary();
@@ -109,6 +102,7 @@ bool employee::addWorkTime(float hour)
 
 // Get функцүүд
 int employee::get_employee_count() { return employee_count; };
+
 int employee::get_emp_id() { return emp_id; };
 char *employee::get_emp_name() { return emp_name; };
 char *employee::get_emp_role() { return emp_role; };
@@ -148,10 +142,10 @@ void employee::set_emp_role(char *role)
     }
     };
 // void employee::set_emp_work_time();
-void employee::set_emp_hourly_rate(float rate)
-{
-    emp_hourly_rate = rate;
-};
+// void employee::set_emp_hourly_rate(float rate)
+// {
+//     emp_hourly_rate = rate;
+// };
 
 
 
@@ -166,8 +160,6 @@ void employeeBusiness::wage_sort(employee **workers)
     {
         return;
     }
-
-    
 
     // Insertion sort ашиглаж эрэмбэлнэ
     for (int i = 1; i < count; i++)
@@ -209,8 +201,10 @@ void employeeBusiness::name_sort(employee **workers) {
     }
 }
 
+// Id-н утга аль хэдийн байгаа эсэхийг шалгана
 bool employeeBusiness::has_id(employee** workers, int id) {
     int count = employee::get_employee_count();
+    
     for (int i=0; i<count; i++) {
         if (workers[i]->get_emp_id()==id) {
             return true;
